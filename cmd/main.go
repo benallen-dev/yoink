@@ -9,38 +9,36 @@ import (
 )
 
 // Just global because I'm heckin lazy
-var logger log.Logger
+var Logger *log.Logger
 
-func customLogger() (logger log.Logger) {
+func yoinkLogger() (out *log.Logger) {
 	styles := log.DefaultStyles()
-	styles.Levels[log.ErrorLevel].SetString("ERROR")
-	styles.Levels[log.DebugLevel].SetString("DEBUG")
-	styles.Levels[log.FatalLevel].SetString("FATAL")
+	styles.Levels[log.InfoLevel].UnsetMaxWidth().Width(5)
+	styles.Levels[log.WarnLevel].UnsetMaxWidth().Width(5)
+	styles.Levels[log.ErrorLevel].UnsetMaxWidth().Width(5)
+	styles.Levels[log.DebugLevel].UnsetMaxWidth().Width(5)
+	styles.Levels[log.FatalLevel].UnsetMaxWidth().Width(5)
 
-	logger = *log.NewWithOptions(os.Stderr, log.Options{
+	out = log.NewWithOptions(os.Stderr, log.Options{
 		ReportCaller: true,
 		ReportTimestamp: true,
+		Level: log.DebugLevel,
 	})
 
-	logger.SetStyles(styles)
+	out.SetStyles(styles)
 
-	return logger
+	return out
 }
 
 func main() {
-	logger = customLogger()
+	Logger = yoinkLogger()
+	fourchan.Logger = Logger // wow that's nasty!
 
 	foo, err := fourchan.GetPage("w", 1)
 	if err != nil {
-		logger.Error("Error fetching page", "error", err)
+		Logger.Error("Error fetching page", "error", err)
 		os.Exit(1)
 	}
 
-	logger.Info("Got page 1", "threads", foo.ThreadCount())
-
-	logger.Debug("I'm a debug message")
-	logger.Warn("I'm a warning")
-	logger.Error("I'm an error")
-	logger.Fatal("I'm fatal")
-
+	Logger.Info("Got page 1", "threads", foo.ThreadCount())
 }
