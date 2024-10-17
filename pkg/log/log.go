@@ -17,9 +17,9 @@ func init() {
 	styles.Levels[log.FatalLevel].UnsetMaxWidth().Width(5)
 
 	logger = log.NewWithOptions(os.Stderr, log.Options{
-		ReportCaller: true,
+		ReportCaller:    true,
 		ReportTimestamp: true,
-		Level: log.DebugLevel,
+		Level:           log.DebugLevel,
 	})
 
 	logger.SetStyles(styles)
@@ -53,4 +53,3 @@ func Error(msg string, keysAndValues ...interface{}) {
 func Fatal(msg string, keysAndValues ...interface{}) {
 	logger.Fatal(msg, keysAndValues...)
 }
-

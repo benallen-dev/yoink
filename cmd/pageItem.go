@@ -38,9 +38,10 @@ func handlePageQueueItem(i PageQueueItem, q chan QueueItem) {
 
 	for _, t := range page.Threads {
 		first := t.Posts[0]
+
 		q <- ThreadQueueItem{
 			board: i.board,
-			op: first.No,
+			op:    first.No,
 		}
 	}
 

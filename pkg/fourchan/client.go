@@ -17,7 +17,7 @@ import (
 // 4. Make API requests using the same protocol as the app. Only use SSL when a user is accessing your app over HTTPS.
 
 type Client struct {
-	client *http.Client
+	client      *http.Client
 	RateLimiter *rate.Limiter
 }
 
@@ -27,11 +27,7 @@ func NewClient() Client {
 	logger.Info("TODO: Finish implementing rate limited http client")
 
 	return Client{
-		client: http.DefaultClient,
+		client:      http.DefaultClient,
 		RateLimiter: rate.NewLimiter(rate.Limit(1), 1),
 	}
 }
-
-
-
-

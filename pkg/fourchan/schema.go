@@ -43,12 +43,11 @@ type Post struct {
 	Images        int    `json:"images,omitempty"`
 	OmittedPosts  int    `json:"omitted_posts,omitempty"`
 	OmittedImages int    `json:"omitted_images,omitempty"`
-	Sticky      int    `json:"sticky,omitempty"`
-	Closed      int    `json:"closed,omitempty"`
-	Capcode     string `json:"capcode"`
-	UniqueIPs   int    `json:"unique_ips,omitempty"`
-
-} 
+	Sticky        int    `json:"sticky,omitempty"`
+	Closed        int    `json:"closed,omitempty"`
+	Capcode       string `json:"capcode"`
+	UniqueIPs     int    `json:"unique_ips,omitempty"`
+}
 
 func (p Page) ThreadCount() int {
 	return len(p.Threads)

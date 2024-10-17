@@ -2,8 +2,8 @@ package debug
 
 import (
 	"encoding/json"
-	"path"
 	"os"
+	"path"
 
 	"yoink/pkg/log"
 )
@@ -34,4 +34,3 @@ func JsonToDisk(filename string, t any) {
 	enc := json.NewEncoder(f)
 	enc.Encode(t)
 }
-

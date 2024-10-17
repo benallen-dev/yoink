@@ -13,9 +13,10 @@ import (
 // TODO: Move this to the correct place
 
 type ImageQueueItem struct {
-	board string
+	board    string
 	filename string
 }
+
 func (i ImageQueueItem) getUrl() string {
 	return fmt.Sprintf("https://i.4cdn.org/%s/%s", i.board, i.filename)
 }
@@ -25,7 +26,6 @@ func handleImageQueueItem(i ImageQueueItem) {
 
 	url := i.getUrl()
 	log.Info("Fetching", "url", url)
-
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -67,4 +67,3 @@ func handleImageQueueItem(i ImageQueueItem) {
 		return
 	}
 }
-

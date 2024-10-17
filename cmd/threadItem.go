@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"yoink/pkg/debug"
 	"yoink/pkg/fourchan"
 	"yoink/pkg/log"
-	"yoink/pkg/debug"
 )
 
 // TODO: Move this to the correct place
@@ -24,7 +24,7 @@ func (i ThreadQueueItem) getUrl() string {
 
 func handleThreadQueueItem(i ThreadQueueItem, q chan QueueItem) {
 	logger := log.Default()
-	
+
 	url := i.getUrl()
 	logger.Info("Fetching", "url", url)
 	resp, err := http.Get(url)
@@ -43,13 +43,12 @@ func handleThreadQueueItem(i ThreadQueueItem, q chan QueueItem) {
 	debug.JsonToDisk(fmt.Sprintf("%d", i.op), thread)
 
 	for _, p := range thread.Posts {
-		if (p.Filename != "" ) {
+		if p.Filename != "" {
 
 			q <- ImageQueueItem{
-				board: i.board,
+				board:    i.board,
 				filename: strconv.Itoa(int(p.No)) + p.Ext,
 			}
 		}
 	}
 }
-
