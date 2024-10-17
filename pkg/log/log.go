@@ -33,3 +33,24 @@ func Default() log.Logger {
 func Custom(options log.Options) *log.Logger {
 	return log.NewWithOptions(os.Stderr, options)
 }
+
+func Debug(msg string, keysAndValues ...interface{}) {
+	logger.Debug(msg, keysAndValues...)
+}
+
+func Info(msg string, keysAndValues ...interface{}) {
+	logger.Info(msg, keysAndValues...)
+}
+
+func Warn(msg string, keysAndValues ...interface{}) {
+	logger.Warn(msg, keysAndValues...)
+}
+
+func Error(msg string, keysAndValues ...interface{}) {
+	logger.Error(msg, keysAndValues...)
+}
+
+func Fatal(msg string, keysAndValues ...interface{}) {
+	logger.Fatal(msg, keysAndValues...)
+}
+

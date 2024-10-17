@@ -1,2 +1,6 @@
 bin
 tmp
+img
+debug
+
+!pkg/debug
