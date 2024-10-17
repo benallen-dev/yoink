@@ -5,16 +5,15 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/charmbracelet/log"
+	"yoink/pkg/log"
 )
 
-var Logger *log.Logger
-
 func GetPage(board string, page int) (out Page, err error) {
+	logger := log.Default()
 
 	url := fmt.Sprintf("https://a.4cdn.org/%s/%d.json", board, page)
 
-	Logger.Info("Fetching", "url", url)
+	logger.Info("Fetching", "url", url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return out, err
