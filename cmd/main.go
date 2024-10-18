@@ -1,17 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"yoink/pkg/log"
+	"yoink/pkg/fourchan"
 )
-
-type QueueItem interface {
-	getUrl() string
-}
 
 func main() {
 	logger := log.Default()
@@ -22,32 +18,13 @@ func main() {
 	// queue. A single queue item can push multiple new queue items and if
 	// the queue fills up, it'll block until space becomes available - which
 	// will never happen.
-	q := make(chan QueueItem, 1000)
+	q := make(chan fourchan.QueueItem, 1000)
 	osSignal := make(chan os.Signal, 1)
 	signal.Notify(osSignal, os.Interrupt, syscall.SIGTERM)
 
 	// seed the queue
-	q <- PageQueueItem{
-		board: "w",
-		page:  1,
-	}
+	q <- fourchan.NewPageQueueItem("w", 1)
 
-	for len(q) > 0 {
-		select {
-		case i := <-q:
-			switch i.(type) {
-			case PageQueueItem:
-				handlePageQueueItem(i.(PageQueueItem), q)
-			case ThreadQueueItem:
-				handleThreadQueueItem(i.(ThreadQueueItem), q)
-			case ImageQueueItem:
-				handleImageQueueItem(i.(ImageQueueItem))
-			}
-		case s := <-osSignal:
-			logger.Info("Received OS signal", "signal", s)
-			return
-		}
-		logger.Info(fmt.Sprintf("q is now %d items long", len(q)))
-	}
-
+	// kinda meh to implicitly block but whatever let's just see if this works
+	fourchan.ProcessQueue(q, osSignal)
 }

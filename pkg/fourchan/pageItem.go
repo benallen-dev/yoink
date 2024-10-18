@@ -1,19 +1,23 @@
-package main
+package fourchan
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 
-	"yoink/pkg/fourchan"
 	"yoink/pkg/log"
 )
-
-// TODO: Move this to the correct place
 
 type PageQueueItem struct {
 	board string
 	page  int
+}
+
+func NewPageQueueItem(board string, page int) PageQueueItem {
+	return PageQueueItem{
+		board: board,
+		page:  page,
+	}
 }
 
 func (i PageQueueItem) getUrl() string {
@@ -33,7 +37,7 @@ func handlePageQueueItem(i PageQueueItem, q chan QueueItem) {
 	}
 	defer resp.Body.Close()
 
-	var page fourchan.Page
+	var page Page
 	json.NewDecoder(resp.Body).Decode(&page)
 
 	for _, t := range page.Threads {

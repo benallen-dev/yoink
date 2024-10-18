@@ -1,4 +1,4 @@
-package main
+package fourchan
 
 import (
 	"encoding/json"
@@ -6,12 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"yoink/pkg/debug"
-	"yoink/pkg/fourchan"
+	//"yoink/pkg/debug"
 	"yoink/pkg/log"
 )
-
-// TODO: Move this to the correct place
 
 type ThreadQueueItem struct {
 	board string
@@ -34,13 +31,13 @@ func handleThreadQueueItem(i ThreadQueueItem, q chan QueueItem) {
 	}
 	defer resp.Body.Close()
 
-	var thread fourchan.Thread
+	var thread Thread
 	err = json.NewDecoder(resp.Body).Decode(&thread)
 	if err != nil {
 		logger.Error("Could not decode thread", "error", err, "url", url, "board", i.board, "op", i.op)
 	}
 
-	debug.JsonToDisk(fmt.Sprintf("%d", i.op), thread)
+	//debug.JsonToDisk(fmt.Sprintf("%d", i.op), thread)
 
 	for _, p := range thread.Posts {
 		if p.Filename != "" {
