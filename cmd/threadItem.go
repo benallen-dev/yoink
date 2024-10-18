@@ -47,7 +47,7 @@ func handleThreadQueueItem(i ThreadQueueItem, q chan QueueItem) {
 
 			q <- ImageQueueItem{
 				board:    i.board,
-				filename: strconv.Itoa(int(p.No)) + p.Ext,
+				filename: strconv.Itoa(int(p.Tim)) + p.Ext,
 			}
 		}
 	}
