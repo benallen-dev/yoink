@@ -15,7 +15,7 @@ import (
 
 type ThreadQueueItem struct {
 	board string
-	op    int64
+	op    int
 }
 
 func (i ThreadQueueItem) getUrl() string {
@@ -47,7 +47,7 @@ func handleThreadQueueItem(i ThreadQueueItem, q chan QueueItem) {
 
 			q <- ImageQueueItem{
 				board:    i.board,
-				filename: strconv.Itoa(int(p.Tim)) + p.Ext,
+				filename: strconv.Itoa(p.Tim) + p.Ext,
 			}
 		}
 	}

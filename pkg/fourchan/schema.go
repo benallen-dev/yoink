@@ -21,9 +21,9 @@ func (t Thread) String() string {
 // TODO: Add field descriptions
 type Post struct {
 	// The numeric post ID
-	No            int64  `json:"no"`
+	No            int  `json:"no"`
 	// For replies: this is the ID of the thread being replied to. For OP: this value is zero
-	Resto         int64  `json:"resto"`
+	Resto         int  `json:"resto"`
 	// If the thread is being pinned to the top of the page (OP only, if thread is currently stickied)	
 	Sticky        int    `json:"sticky,omitempty"`
 	// If the thread is closed to replies (OP only, if thread is currently closed)
@@ -31,7 +31,7 @@ type Post struct {
 	// MM/DD/YY(Day)HH:MM (:SS on some boards), EST/EDT timezone
 	Now           string `json:"now"`
 	// UNIX timestamp the post was created
-	Time          int64  `json:"time"`
+	Time          int  `json:"time"`
 	// Name user posted with. Defaults to Anonymous
 	Name          string `json:"name"`
 	// The user's tripcode, in format: !tripcode or !!securetripcode (if post has tripcode)
@@ -53,7 +53,7 @@ type Post struct {
 	// Comment (HTML escaped) (if comment was included)
 	Com           string `json:"com,omitempty"`
 	// Unix timestamp + microtime that an image was uploaded	
-	Tim           int64  `json:"tim,omitempty"`
+	Tim           int  `json:"tim,omitempty"`
 	// Filename as it appeared on the poster's device
 	Filename      string `json:"filename"`
 	// Filetype
