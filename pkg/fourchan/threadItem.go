@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	//"yoink/pkg/debug"
 	"yoink/pkg/log"
 )
 
@@ -36,8 +35,6 @@ func handleThreadQueueItem(i ThreadItem, q chan QueueItem) {
 	if err != nil {
 		logger.Error("Could not decode thread", "error", err, "url", url, "board", i.board, "op", i.op)
 	}
-
-	//debug.JsonToDisk(fmt.Sprintf("%d", i.op), thread)
 
 	for _, p := range thread.Posts {
 		if p.Filename != "" {

@@ -31,7 +31,6 @@ func handlePageQueueItem(i PageItem, q chan QueueItem) {
 	logger.Info("Fetching", "url", url)
 	resp, err := http.Get(url)
 	if err != nil {
-		// just exit, I suppose
 		log.Warn("Could not fetch page", "url", url, "board", i.board, "page", i.page)
 		return
 	}

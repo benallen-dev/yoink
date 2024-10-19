@@ -34,22 +34,27 @@ func Custom(options log.Options) *log.Logger {
 	return log.NewWithOptions(os.Stderr, options)
 }
 
+// Keep in mind calling the package-level Debug logger will show up as if logger.go is the caller, not the location you called log.Debug from.
 func Debug(msg string, keysAndValues ...interface{}) {
 	logger.Debug(msg, keysAndValues...)
 }
 
+// Keep in mind calling the package-level Info logger will show up as if logger.go is the caller, not the location you called log.Info from.
 func Info(msg string, keysAndValues ...interface{}) {
 	logger.Info(msg, keysAndValues...)
 }
 
+// Keep in mind calling the package-level Warn logger will show up as if logger.go is the caller, not the location you called log.Warn from.
 func Warn(msg string, keysAndValues ...interface{}) {
 	logger.Warn(msg, keysAndValues...)
 }
 
+// Keep in mind calling the package-level Error logger will show up as if logger.go is the caller, not the location you called log.Error from.
 func Error(msg string, keysAndValues ...interface{}) {
 	logger.Error(msg, keysAndValues...)
 }
 
+// Keep in mind calling the package-level Fatal logger will show up as if logger.go is the caller, not the location you called log.Fatal from.
 func Fatal(msg string, keysAndValues ...interface{}) {
 	logger.Fatal(msg, keysAndValues...)
 }

@@ -57,7 +57,6 @@ func main() {
 		secondGoRoutine(fooCtx)
 	}()
 
-
 	// Block main thread until we receive an OS signal (exit)
 	s := <-osSignal
 	logger.Info("Received OS signal", "signal", s)

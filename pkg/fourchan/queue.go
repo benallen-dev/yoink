@@ -11,7 +11,6 @@ type QueueItem interface {
 	getUrl() string
 }
 
-//func ProcessQueue(ctx context.Context, q chan QueueItem, osSignal chan os.Signal) {
 func ProcessQueue(ctx context.Context, q chan QueueItem) {
 	logger := log.Default()
 
@@ -29,9 +28,6 @@ func ProcessQueue(ctx context.Context, q chan QueueItem) {
 			case ImageItem:
 				handleImageQueueItem(i.(ImageItem))
 			}
-		// case s := <-osSignal:
-		// 	logger.Info("Received OS signal, stopping ProcessQueue", "signal", s)
-		// 	return
 		}
 		logger.Debug(fmt.Sprintf("queue is now %d items long", len(q)))
 	}
@@ -39,7 +35,7 @@ func ProcessQueue(ctx context.Context, q chan QueueItem) {
 
 func NewQueue(board string) (q chan QueueItem) {
 	q = make(chan QueueItem, 1000)
-	q <- NewPageItem(board,1)
+	q <- NewPageItem(board, 1)
 
 	return q
 }
