@@ -1,31 +1,68 @@
 package main
 
 import (
+	"context"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
+	"time"
 
-	"yoink/pkg/log"
 	"yoink/pkg/fourchan"
+	"yoink/pkg/log"
 )
+
+func secondGoRoutine(ctx context.Context) {
+	logger := log.Default()
+
+	for {
+		select {
+		case <-ctx.Done():
+			logger.Info("Second goroutine received context.Done, returning")
+			return
+		default:
+			logger.Info("Second goroutine is also still running")
+			time.Sleep(1 * time.Second)
+		}
+	}
+}
 
 func main() {
 	logger := log.Default()
 
-	logger.Info("Starting the queue")
-
-	// This is a bad idea so long as we only have 1 worker processing the
-	// queue. A single queue item can push multiple new queue items and if
-	// the queue fills up, it'll block until space becomes available - which
-	// will never happen.
+	// Set up listening for exit signals and gracefully exiting
+	var wg sync.WaitGroup
 	osSignal := make(chan os.Signal, 1)
 	signal.Notify(osSignal, os.Interrupt, syscall.SIGTERM)
 
-	// seed the queue
-	q := fourchan.NewQueue("w")
+	// Set up contexts for each parallel process
+	rootCtx, rootCancel := context.WithCancel(context.Background())
+	defer rootCancel()
 
-	// kinda meh to implicitly block but whatever let's just see if this works
-	// instead of using a channel with a single osSignal, perhaps this is a good
-	// place to use a shared context with a cancel function
-	fourchan.ProcessQueue(q, osSignal)
+	fourCtx, fourCancel := context.WithCancel(rootCtx)
+	defer fourCancel()
+
+	fooCtx, fooCancel := context.WithCancel(rootCtx)
+	defer fooCancel()
+
+	// Process all the things
+	go func() {
+		wg.Add(1)
+		defer wg.Done()
+		fourchan.ProcessQueue(fourCtx, fourchan.NewQueue("w"))
+	}()
+	go func() {
+		wg.Add(1)
+		defer wg.Done()
+		secondGoRoutine(fooCtx)
+	}()
+
+
+	// Block main thread until we receive an OS signal (exit)
+	s := <-osSignal
+	logger.Info("Received OS signal", "signal", s)
+	rootCancel()
+	logger.Info("Cancelled root context, waiting for wg.Wait()")
+	wg.Wait()
+	logger.Info("Exiting")
 }
