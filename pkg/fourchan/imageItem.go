@@ -12,16 +12,16 @@ import (
 
 // TODO: Move this to the correct place
 
-type ImageQueueItem struct {
+type ImageItem struct {
 	board    string
 	filename string
 }
 
-func (i ImageQueueItem) getUrl() string {
+func (i ImageItem) getUrl() string {
 	return fmt.Sprintf("https://i.4cdn.org/%s/%s", i.board, i.filename)
 }
 
-func handleImageQueueItem(i ImageQueueItem) {
+func handleImageQueueItem(i ImageItem) {
 	logger := log.Default()
 
 	url := i.getUrl()

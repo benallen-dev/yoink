@@ -10,16 +10,16 @@ import (
 	"yoink/pkg/log"
 )
 
-type ThreadQueueItem struct {
+type ThreadItem struct {
 	board string
 	op    int
 }
 
-func (i ThreadQueueItem) getUrl() string {
+func (i ThreadItem) getUrl() string {
 	return fmt.Sprintf("https://a.4cdn.org/%s/thread/%d.json", i.board, i.op)
 }
 
-func handleThreadQueueItem(i ThreadQueueItem, q chan QueueItem) {
+func handleThreadQueueItem(i ThreadItem, q chan QueueItem) {
 	logger := log.Default()
 
 	url := i.getUrl()
@@ -42,7 +42,7 @@ func handleThreadQueueItem(i ThreadQueueItem, q chan QueueItem) {
 	for _, p := range thread.Posts {
 		if p.Filename != "" {
 
-			q <- ImageQueueItem{
+			q <- ImageItem{
 				board:    i.board,
 				filename: strconv.Itoa(p.Tim) + p.Ext,
 			}

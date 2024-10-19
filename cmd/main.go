@@ -18,13 +18,14 @@ func main() {
 	// queue. A single queue item can push multiple new queue items and if
 	// the queue fills up, it'll block until space becomes available - which
 	// will never happen.
-	q := make(chan fourchan.QueueItem, 1000)
 	osSignal := make(chan os.Signal, 1)
 	signal.Notify(osSignal, os.Interrupt, syscall.SIGTERM)
 
 	// seed the queue
-	q <- fourchan.NewPageQueueItem("w", 1)
+	q := fourchan.NewQueue("w")
 
 	// kinda meh to implicitly block but whatever let's just see if this works
+	// instead of using a channel with a single osSignal, perhaps this is a good
+	// place to use a shared context with a cancel function
 	fourchan.ProcessQueue(q, osSignal)
 }

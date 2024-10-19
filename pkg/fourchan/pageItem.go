@@ -8,23 +8,23 @@ import (
 	"yoink/pkg/log"
 )
 
-type PageQueueItem struct {
+type PageItem struct {
 	board string
 	page  int
 }
 
-func NewPageQueueItem(board string, page int) PageQueueItem {
-	return PageQueueItem{
+func NewPageItem(board string, page int) PageItem {
+	return PageItem{
 		board: board,
 		page:  page,
 	}
 }
 
-func (i PageQueueItem) getUrl() string {
+func (i PageItem) getUrl() string {
 	return fmt.Sprintf("https://a.4cdn.org/%s/%d.json", i.board, i.page)
 }
 
-func handlePageQueueItem(i PageQueueItem, q chan QueueItem) {
+func handlePageQueueItem(i PageItem, q chan QueueItem) {
 	logger := log.Default()
 	url := i.getUrl()
 
@@ -43,7 +43,7 @@ func handlePageQueueItem(i PageQueueItem, q chan QueueItem) {
 	for _, t := range page.Threads {
 		first := t.Posts[0]
 
-		q <- ThreadQueueItem{
+		q <- ThreadItem{
 			board: i.board,
 			op:    first.No,
 		}
