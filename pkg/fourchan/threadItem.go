@@ -3,7 +3,6 @@ package fourchan
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"strconv"
 
 	"yoink/pkg/log"
@@ -22,10 +21,10 @@ func handleThreadQueueItem(i ThreadItem, q chan QueueItem) {
 	logger := log.Default()
 
 	url := i.getUrl()
-	logger.Info("Fetching", "url", url)
-	resp, err := http.Get(url)
+	logger.Debug("Fetching", "url", url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
-		log.Warn("Could not fetch thread", "url", url, "board", i.board, "op", i.op)
+		logger.Warn("Could not fetch thread", "url", url, "board", i.board, "op", i.op)
 		return
 	}
 	defer resp.Body.Close()

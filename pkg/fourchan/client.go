@@ -1,8 +1,8 @@
 package fourchan
 
 import (
+	"context"
 	"net/http"
-	"time"
 
 	"yoink/pkg/log"
 
@@ -16,32 +16,37 @@ import (
 // 3. Use If-Modified-Since when doing your requests.
 // 4. Make API requests using the same protocol as the app. Only use SSL when a user is accessing your app over HTTPS.
 
+// Package-level httpClient for making requests to 4chan API
+var httpClient = NewClient()
+
 type Client struct {
-	client      *http.Client
-	RateLimiter *rate.Limiter
+	client     *http.Client
+	limiter    *rate.Limiter
+	limiterCtx context.Context
 }
 
 func NewClient() Client {
 	logger := log.Default()
-	client := &http.Client{
-		Transport: &http.Transport{
-			MaxIdleConns:    10,
-			IdleConnTimeout: 30 * time.Second,
-		},
-	}
+	client := &http.Client{}
 
-	logger.Info("TODO: Finish implementing rate limited http client")
-
-	// TODO: Add rate limiting for 1 request per second
-
-	// TODO: Add LRU cache for tracking the last time a route was accessed
+	// TODO: Add persistent LRU cache for tracking the last time a route was accessed
 	//		 so we can set If-Modified-Since headers.
 
 	// TODO: Add database of md5 hashes for images so we can avoid downloading
 	//       images we already have.
 
+	logger.Debug("Created new 4chan client")
+
 	return Client{
-		client:      client,
-		RateLimiter: rate.NewLimiter(rate.Limit(1), 1),
+		client:     client,
+		limiter:    rate.NewLimiter(rate.Limit(1), 1),
+		limiterCtx: context.Background(),
 	}
+}
+
+func (c *Client) Get(url string) (*http.Response, error) {
+	logger := log.Default()
+	logger.Info("GET (rate limited)", "url", url)
+	c.limiter.Wait(c.limiterCtx)
+	return c.client.Get(url)
 }

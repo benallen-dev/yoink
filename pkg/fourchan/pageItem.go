@@ -3,7 +3,6 @@ package fourchan
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 
 	"yoink/pkg/log"
 )
@@ -28,10 +27,10 @@ func handlePageQueueItem(i PageItem, q chan QueueItem) {
 	logger := log.Default()
 	url := i.getUrl()
 
-	logger.Info("Fetching", "url", url)
-	resp, err := http.Get(url)
+	logger.Debug("Fetching", "url", url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
-		log.Warn("Could not fetch page", "url", url, "board", i.board, "page", i.page)
+		logger.Warn("Could not fetch page", "url", url, "board", i.board, "page", i.page)
 		return
 	}
 	defer resp.Body.Close()
