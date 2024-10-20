@@ -3,6 +3,7 @@ package log
 import (
 	"os"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/log"
 )
 
@@ -10,14 +11,14 @@ var logger *log.Logger
 
 func init() {
 	styles := log.DefaultStyles()
-	styles.Levels[log.InfoLevel].UnsetMaxWidth().Width(5)
-	styles.Levels[log.WarnLevel].UnsetMaxWidth().Width(5)
+	styles.Levels[log.DebugLevel].UnsetMaxWidth().Width(5).Foreground(lipgloss.Color(lipgloss.Color("8")))
+	styles.Levels[log.InfoLevel].UnsetMaxWidth().Width(5).Foreground(lipgloss.Color(lipgloss.Color("10")))
+	styles.Levels[log.WarnLevel].UnsetMaxWidth().Width(5).Foreground(lipgloss.Color(lipgloss.Color("11")))
 	styles.Levels[log.ErrorLevel].UnsetMaxWidth().Width(5)
-	styles.Levels[log.DebugLevel].UnsetMaxWidth().Width(5)
 	styles.Levels[log.FatalLevel].UnsetMaxWidth().Width(5)
 
 	logger = log.NewWithOptions(os.Stderr, log.Options{
-		ReportCaller:    true,
+		ReportCaller:    false,
 		ReportTimestamp: true,
 		Level:           log.InfoLevel,
 	})
