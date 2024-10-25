@@ -36,7 +36,7 @@ func handleThreadQueueItem(i ThreadItem, q chan QueueItem) {
 	}
 
 	for _, p := range thread.Posts {
-		if p.Filename != "" {
+		if p.Filename != "" && p.W == 3840 && p.H == 2160{
 
 			q <- ImageItem{
 				board:    i.board,

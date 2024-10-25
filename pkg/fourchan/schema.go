@@ -18,7 +18,6 @@ func (t Thread) String() string {
 	return fmt.Sprintf("Thread with %d posts", t.PostCount())
 }
 
-// TODO: Add field descriptions
 type Post struct {
 	// The numeric post ID
 	No            int  `json:"no"`

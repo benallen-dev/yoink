@@ -9,8 +9,6 @@ import (
 	"yoink/pkg/log"
 )
 
-// TODO: Move this to the correct place
-
 type ImageItem struct {
 	board    string
 	filename string
@@ -38,30 +36,17 @@ func handleImageQueueItem(i ImageItem) {
 		return
 	}
 
-	basePath, err := os.Getwd()
-	if err != nil {
-		logger.Error("Couldn't get cwd")
-		return
-	}
-
-	// check if dir exists, create it if not
-	dirPath := path.Join(basePath, "img", i.board)
-	_, err = os.Stat(dirPath)
-	if os.IsNotExist(err) {
-		os.Mkdir(dirPath, 0755)
-	}
-
 	// create file
-	fullPath := path.Join(basePath, i.board, i.filename)
+	fullPath := path.Join(getYoinkPath(), i.board, i.filename)
 	f, err := os.Create(fullPath)
 	if err != nil {
-		logger.Error("Could not create file", "path", fullPath)
+		logger.Error("Could not create file", "path", fullPath, "error", err)
 		return
 	}
 
 	_, err = io.Copy(f, resp.Body)
 	if err != nil {
-		logger.Error("Could not write file", "path", fullPath)
+		logger.Error("Could not write file", "path", fullPath, "error", err)
 		return
 	}
 }
