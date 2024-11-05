@@ -24,6 +24,14 @@ func handleImageQueueItem(i ImageItem) {
 	url := i.getUrl()
 	logger.Debug("Fetching", "url", url)
 
+	
+	fullPath := path.Join(getYoinkPath(), i.board, i.filename)
+	stat, err := os.Stat(fullPath)
+	if err == nil && stat.Size() > 0 {
+		logger.Info("File already exists", "path", fullPath)
+		return
+	}
+
 	resp, err := httpClient.Get(url)
 	if err != nil {
 		logger.Warn("Could not fetch image", "url", url, "board", i.board)
@@ -37,7 +45,6 @@ func handleImageQueueItem(i ImageItem) {
 	}
 
 	// create file
-	fullPath := path.Join(getYoinkPath(), i.board, i.filename)
 	f, err := os.Create(fullPath)
 	if err != nil {
 		logger.Error("Could not create file", "path", fullPath, "error", err)

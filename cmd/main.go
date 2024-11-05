@@ -26,21 +26,27 @@ func main() {
 
 	fourCtx, fourCancel := context.WithCancel(rootCtx)
 	defer fourCancel()
+	
+	wg.Add(1) // If you do this in the goroutine, wg.Add is executed after wg.Wait
 
 	// Process all the things
 	go func() {
-		wg.Add(1)
 		defer wg.Done()
-		fourchan.ProcessQueue(fourCtx, fourchan.NewQueue("w"))
+		fourchan.ProcessQueue(fourCtx, fourchan.NewQueue("wg")) // wallpaper/general, not waitgroup
+		logger.Info("Finished processing queue") 
 	}()
 
-	// Block main thread until we receive an OS signal (exit)
-	s := <-osSignal
-	fmt.Println() // newline after ^C
-	logger.Warn("Received OS signal", "signal", s)
+
+	// OS signal thread
+	go func() {
+		// Block thread until we receive an OS signal (exit)
+		s := <-osSignal
+		fmt.Println() // newline after ^C
+		logger.Warn("Received OS signal", "signal", s)
 	
-	rootCancel()
-	logger.Debug("Cancelled root context, waiting for wg.Wait()")
+		rootCancel()
+		logger.Debug("Cancelled root context, waiting for wg.Wait()")
+	}()
 	wg.Wait()
 
 	logger.Info("Exiting!")
