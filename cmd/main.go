@@ -10,10 +10,16 @@ import (
 
 	"yoink/pkg/fourchan"
 	"yoink/pkg/log"
+	"yoink/pkg/cache"
 )
 
 func main() {
 	logger := log.Default()
+
+	foo := cache.NewCache()
+	foo.Persist()
+	fmt.Println(foo.String())
+	return
 
 	// Set up listening for exit signals and gracefully exiting
 	var wg sync.WaitGroup
