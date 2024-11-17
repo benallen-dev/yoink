@@ -6,12 +6,14 @@ import (
 	"os"
 	"path"
 
+	"yoink/pkg/config"
 	"yoink/pkg/log"
 )
 
 type ImageItem struct {
 	board    string
 	filename string
+	tim      string
 }
 
 func (i ImageItem) getUrl() string {
@@ -24,11 +26,10 @@ func handleImageQueueItem(i ImageItem) {
 	url := i.getUrl()
 	logger.Debug("Fetching", "url", url)
 
-	
-	fullPath := path.Join(getYoinkPath(), i.board, i.filename)
+	fullPath := path.Join(config.DataPath(), i.board, i.filename)
 	stat, err := os.Stat(fullPath)
 	if err == nil && stat.Size() > 0 {
-		logger.Info("File already exists", "path", fullPath)
+		logger.Debug("File already exists", "path", fullPath)
 		return
 	}
 
@@ -56,4 +57,6 @@ func handleImageQueueItem(i ImageItem) {
 		logger.Error("Could not write file", "path", fullPath, "error", err)
 		return
 	}
+
+	logger.Info("Downloaded", "path", fullPath)
 }

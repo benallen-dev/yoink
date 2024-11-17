@@ -35,6 +35,11 @@ func handlePageQueueItem(i PageItem, q chan QueueItem) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		logger.Warn(fmt.Sprintf("Got non-OK statuscode %s for %s", resp.Status, url))
+		return
+	}
+
 	var page Page
 	json.NewDecoder(resp.Body).Decode(&page)
 
@@ -46,5 +51,4 @@ func handlePageQueueItem(i PageItem, q chan QueueItem) {
 			op:    first.No,
 		}
 	}
-
 }

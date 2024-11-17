@@ -1,4 +1,4 @@
-package fourchan
+package config
 
 import (
 	"os"
@@ -7,7 +7,7 @@ import (
 	"yoink/pkg/log"
 )
 
-func getYoinkPath() (out string) {
+func DataPath() (out string) {
 	logger := log.Default()
 	out = os.Getenv("YOINK_BASE_PATH")
 

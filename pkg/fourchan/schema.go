@@ -1,6 +1,9 @@
 package fourchan
 
-import "fmt"
+import (
+	"encoding/json"
+	//"fmt"
+)
 
 type Page struct {
 	Threads []Thread `json:"threads"`
@@ -15,7 +18,16 @@ func (t Thread) PostCount() int {
 }
 
 func (t Thread) String() string {
-	return fmt.Sprintf("Thread with %d posts", t.PostCount())
+
+	f := t.Posts[0]
+
+	j, err := json.MarshalIndent(f, "", "  ")
+	if err != nil {
+		return "Invalid json object"
+	}
+	
+	return string(j)
+	//return fmt.Sprintf("Thread with %d posts", t.PostCount())
 }
 
 type Post struct {

@@ -20,7 +20,7 @@ func init() {
 	logger = log.NewWithOptions(os.Stderr, log.Options{
 		ReportCaller:    false,
 		ReportTimestamp: true,
-		Level:           log.DebugLevel,
+		Level:           log.InfoLevel,
 	})
 
 	logger.SetStyles(styles)

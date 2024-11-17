@@ -8,18 +8,13 @@ import (
 	"sync"
 	"syscall"
 
+//	"yoink/pkg/cache"
 	"yoink/pkg/fourchan"
 	"yoink/pkg/log"
-	"yoink/pkg/cache"
 )
 
 func main() {
 	logger := log.Default()
-
-	foo := cache.NewCache()
-	foo.Persist()
-	fmt.Println(foo.String())
-	return
 
 	// Set up listening for exit signals and gracefully exiting
 	var wg sync.WaitGroup
@@ -28,6 +23,7 @@ func main() {
 
 	// Set up contexts for each parallel process
 	rootCtx, rootCancel := context.WithCancel(context.Background())
+//	rootCtx = context.WithValue(rootCtx, cache.CTX_KEY, cache.NewCache())
 	defer rootCancel()
 
 	fourCtx, fourCancel := context.WithCancel(rootCtx)
@@ -38,10 +34,9 @@ func main() {
 	// Process all the things
 	go func() {
 		defer wg.Done()
-		fourchan.ProcessQueue(fourCtx, fourchan.NewQueue("wg")) // wallpaper/general, not waitgroup
+		fourchan.ProcessQueue(fourCtx, fourchan.NewQueue(fourCtx, "wg")) // wallpaper/general, not waitgroup
 		logger.Info("Finished processing queue") 
 	}()
-
 
 	// OS signal thread
 	go func() {

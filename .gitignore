@@ -1,6 +1,8 @@
-bin
-tmp
-img
-debug
+bin/
+tmp/
+img/
+debug/
 
 !pkg/debug
+
+imgs.cache
