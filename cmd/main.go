@@ -8,7 +8,6 @@ import (
 	"sync"
 	"syscall"
 
-//	"yoink/pkg/cache"
 	"yoink/pkg/fourchan"
 	"yoink/pkg/log"
 )
@@ -23,7 +22,6 @@ func main() {
 
 	// Set up contexts for each parallel process
 	rootCtx, rootCancel := context.WithCancel(context.Background())
-//	rootCtx = context.WithValue(rootCtx, cache.CTX_KEY, cache.NewCache())
 	defer rootCancel()
 
 	fourCtx, fourCancel := context.WithCancel(rootCtx)

@@ -33,12 +33,11 @@ func NewClient() Client {
 	client := &http.Client{}
 	history := *cache.NewCache("4chan")
 
-
 	// Load history from disk
 	if err := history.Load(); err != nil {
 		logger.Error("Could not load cache from disk", "error", err)
 	}
-	
+
 	// TODO: Add database of md5 hashes for images so we can avoid downloading
 	//       images we already have.
 

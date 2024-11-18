@@ -35,8 +35,13 @@ func handlePageQueueItem(i PageItem, q chan QueueItem) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		logger.Warn(fmt.Sprintf("Got non-OK statuscode %s for %s", resp.Status, url))
+	if resp.StatusCode != 404 {
+		// Queue the next page
+		q <- NewPageItem(i.board, i.page+1)
+	}
+
+	if resp.StatusCode == 304 || resp.StatusCode == 404 {
+		logger.Warn(fmt.Sprintf("%s: %s", resp.Status, url))
 		return
 	}
 
@@ -51,4 +56,5 @@ func handlePageQueueItem(i PageItem, q chan QueueItem) {
 			op:    first.No,
 		}
 	}
+
 }

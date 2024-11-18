@@ -68,19 +68,5 @@ func NewQueue(ctx context.Context, board string) (q chan QueueItem) {
 	
 	q = make(chan QueueItem, 10_000)
 	q <- NewPageItem(board, 1)
-	q <- NewPageItem(board, 2)
-	q <- NewPageItem(board, 3)
-	q <- NewPageItem(board, 4)
-	q <- NewPageItem(board, 5)
-	q <- NewPageItem(board, 6)
-	q <- NewPageItem(board, 7)
-	q <- NewPageItem(board, 8)
-	q <- NewPageItem(board, 9)
-	q <- NewPageItem(board, 10)
-	q <- NewPageItem(board, 11)
-	q <- NewPageItem(board, 12)
-	q <- NewPageItem(board, 13)
-	q <- NewPageItem(board, 14)
-	q <- NewPageItem(board, 15)
 	return q
 }
