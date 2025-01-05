@@ -53,19 +53,6 @@ func ProcessQueue(ctx context.Context, q chan QueueItem) {
 
 // I have somewhat overcomplicated this by using a chan instead of a slice
 func NewQueue(ctx context.Context, board string) (q chan QueueItem) {
-	logger := log.Default()
-
-	// Make a directory to store results in
-	dirPath := path.Join(config.DataPath(), board)
-	_, err := os.Stat(dirPath)
-	if os.IsNotExist(err) {
-		err = os.Mkdir(dirPath, 0755)
-		if err != nil {
-			logger.Error("Could not create dir", "path", dirPath, "error", err)
-			return
-		}
-	}
-	
 	q = make(chan QueueItem, 10_000)
 	q <- NewPageItem(board, 1)
 	return q

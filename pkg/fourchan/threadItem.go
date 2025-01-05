@@ -52,7 +52,7 @@ func handleThreadQueueItem(i ThreadItem, q chan QueueItem) {
 			continue
 		}
 
-		if p.Filename != "" && p.W > 3840 && p.H > 2160{
+		if p.Filename != "" && p.W == 3840 && p.H == 2160{
 			tim := strconv.Itoa(p.Tim)
 
 			q <- ImageItem {

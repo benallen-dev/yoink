@@ -8,17 +8,22 @@ import (
 )
 
 var (
-	ImageDir   = path.Join(DataPath(), "new")
+	NewDir     = path.Join(DataPath(), "new")
+	FaultyDir  = path.Join(DataPath(), "faulty")
 	KeepDir    = path.Join(DataPath(), "categorised", "keep")
 	DiscardDir = path.Join(DataPath(), "categorised", "discard")
 	AnimeDir   = path.Join(DataPath(), "categorised", "anime-nsfw")
 	NsfwDir    = path.Join(DataPath(), "categorised", "nsfw")
+	DeletedDir = path.Join(DataPath(), "deleted")
+
+	ImageW = 3840
+	ImageH = 2160
 )
 
 func init() {
 	logger := log.Default()
 	// Ensure directories exist
-	dirs := []string{ImageDir, KeepDir, DiscardDir, AnimeDir, NsfwDir}
+	dirs := []string{NewDir, KeepDir, DiscardDir, AnimeDir, NsfwDir, FaultyDir, DeletedDir}
 	for _, dir := range dirs {
 		err := os.MkdirAll(dir, 0755)
 		if err != nil {

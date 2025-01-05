@@ -3,18 +3,93 @@ package main
 import (
 	"context"
 	"fmt"
+
+	"image"
+	_ "image/jpeg"
+	_ "image/png"
+
 	"os"
 	"os/signal"
+	"path"
 	"sync"
 	"syscall"
 
+	"yoink/pkg/config"
 	"yoink/pkg/fourchan"
 	"yoink/pkg/log"
 	"yoink/pkg/webui"
 )
 
+func worker(id int, filechan <-chan os.DirEntry) {
+
+	dl := log.Default()
+	logger := dl.With("worker", id)
+
+	// get width and height
+	// if not 3840x2160, delete
+	for file := range filechan {
+
+		e := path.Ext(file.Name())
+		if e == ".jpg" || e == ".png" || e == ".jpeg" {
+			//logger.Info("Found image", "file", file.Name())
+			
+			file, err := os.Open(path.Join(config.NewDir, file.Name()))
+			if err != nil {
+				logger.Error("Could not open file", "error", err)
+				continue
+			}
+
+			img, _, err := image.Decode(file)
+			if err != nil {
+				logger.Error("Could not decode image", "error", err)
+				err := os.Rename(path.Join(config.NewDir, file.Name()), path.Join(config.FaultyDir, path.Base(file.Name())))
+				if err != nil {
+					logger.Error("Could not move file to faulty", "error", err)
+					continue
+				}
+			}
+
+			if img.Bounds().Dx() != 3840 || img.Bounds().Dy() != 2160 {
+				logger.Info("Deleting image", "file", file.Name())
+				err := os.Rename(path.Join(file.Name()), path.Join(config.DeletedDir, path.Base(file.Name())))
+				if err != nil {
+					logger.Error("Could not move file to deleted", "error", err)
+					continue
+				}
+
+			}
+		}
+	}
+}
+
+func cleanup() {
+	logger := log.Default()
+
+	logger.Info("Cleaning up")
+	logger.Info("New dir", "path", config.NewDir)
+	// Let's tidy up all those weird sizes
+	files, err := os.ReadDir(config.NewDir)
+	if err != nil {
+		logger.Error("Could not read new dir", "error", err)
+		return
+	}
+	// create 4 workers
+	jobs := make(chan os.DirEntry)
+	for i := 0; i <= 4; i++ {
+		go worker(i, jobs)
+	}
+
+	for _, file := range files {
+		// get width and height
+		jobs <- file
+	}
+	close(jobs)
+
+}
+
 func main() {
 	logger := log.Default()
+	cleanup()
 
 	// What I really want to do is set up a system whereby in main all you do
 	// is module.Start() and a thread that listens for shutdown and calls

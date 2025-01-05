@@ -34,7 +34,7 @@ func Listen(ctx context.Context) {
 		Handler: mux,
 	}
 
-	mux.Handle("GET /img/", http.StripPrefix("/img/", http.FileServer(http.Dir(config.ImageDir))))
+	mux.Handle("GET /img/", http.StripPrefix("/img/", http.FileServer(http.Dir(config.NewDir))))
 
 	mux.HandleFunc("GET /", handleIndex)
 	mux.HandleFunc("POST /{imageId}/{verb}", handlePost)
@@ -59,7 +59,7 @@ func Listen(ctx context.Context) {
 func handleIndex(w http.ResponseWriter, r *http.Request) {
 	logger := log.Default()
 
-	files, err := os.ReadDir(config.ImageDir)
+	files, err := os.ReadDir(config.NewDir)
 	if err != nil {
 		logger.Error("Could not read data directory", "error", err)
 		return
@@ -128,7 +128,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := os.Rename(path.Join(config.ImageDir, imageId), path.Join(verbMapping[verb], imageId))
+	err := os.Rename(path.Join(config.NewDir, imageId), path.Join(verbMapping[verb], imageId))
 	if err != nil {
 		logger.Error("Could not move file", "error", err)
 		w.WriteHeader(http.StatusInternalServerError)
