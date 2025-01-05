@@ -11,13 +11,13 @@
 			color: #aaa;
 			background-color: #303030;
 			margin: 0;
-			padding: 0;
+			padding: 1rem;
 			box-sizing: border-box;
 		}
 
 		strong, h1 {
 			color: #fff;
-			margin-right: 0.1em;
+			margin-right: 0.1rem;
 		}
 
 		img {
@@ -27,7 +27,7 @@
 
 		#keymap {
 			max-width: 400px;
-			font-size: 1.2em;
+			font-size: 1.2rem;
 			margin: 0 auto;
 			display: flex;
 			justify-content: space-around;
@@ -62,7 +62,7 @@
 </head>
 
 <body>
-	<h1>Hello world</h1>
+	<h1>{{.Count}} Images left to categorise</h1>
 	<img src="img/{{.Image}}" alt="{{.Image}}">
 	<div id="keymap">
 		<p><strong>[K]</strong>eep</p>

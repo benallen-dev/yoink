@@ -6,12 +6,12 @@ import (
 	_ "embed"
 
 	"context"
+	"html/template"
 	"net/http"
 	"os"
 	"path"
 	"reflect"
 	"strings"
-	"html/template"
 
 	"yoink/pkg/config"
 	"yoink/pkg/log"
@@ -25,7 +25,6 @@ import (
 // var discardDir = path.Join(config.DataPath(), "categorised", "discard")
 // var animeDir = path.Join(config.DataPath(), "categorised", "anime-nsfw")
 // var nsfwDir = path.Join(config.DataPath(), "categorised", "nsfw")
-
 
 func Listen(ctx context.Context) {
 	logger := log.Default()
@@ -91,8 +90,10 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 	data := struct {
 		Image string
+		Count int
 	}{
 		Image: imageFile.Name(),
+		Count: len(files),
 	}
 
 	tmpl, err := template.New("index").Parse(string(indexHtml))
