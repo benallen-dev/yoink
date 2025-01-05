@@ -7,6 +7,26 @@ import (
 	"yoink/pkg/log"
 )
 
+var (
+	ImageDir   = path.Join(DataPath(), "new")
+	KeepDir    = path.Join(DataPath(), "categorised", "keep")
+	DiscardDir = path.Join(DataPath(), "categorised", "discard")
+	AnimeDir   = path.Join(DataPath(), "categorised", "anime-nsfw")
+	NsfwDir    = path.Join(DataPath(), "categorised", "nsfw")
+)
+
+func init() {
+	logger := log.Default()
+	// Ensure directories exist
+	dirs := []string{ImageDir, KeepDir, DiscardDir, AnimeDir, NsfwDir}
+	for _, dir := range dirs {
+		err := os.MkdirAll(dir, 0755)
+		if err != nil {
+			logger.Fatal("Could not create directory", "dir", dir, "error", err)
+		}
+	}
+}
+
 func DataPath() (out string) {
 	logger := log.Default()
 	out = os.Getenv("YOINK_BASE_PATH")
@@ -31,6 +51,6 @@ func DataPath() (out string) {
 			return
 		}
 	}
-	
+
 	return out
 }

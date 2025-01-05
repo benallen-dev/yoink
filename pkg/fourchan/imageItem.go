@@ -26,7 +26,7 @@ func handleImageQueueItem(i ImageItem) {
 	url := i.getUrl()
 	logger.Debug("Fetching", "url", url)
 
-	fullPath := path.Join(config.DataPath(), i.board, i.filename)
+	fullPath := path.Join(config.DataPath(), "new", i.filename)
 	stat, err := os.Stat(fullPath)
 	if err == nil && stat.Size() > 0 {
 		logger.Debug("File already exists", "path", fullPath)

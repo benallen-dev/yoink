@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Yoink - {{.Image}}</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			color: #aaa;
+			background-color: #303030;
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		strong, h1 {
+			color: #fff;
+			margin-right: 0.1em;
+		}
+
+		img {
+			width: 100%;
+			height: auto;
+		}
+
+		#keymap {
+			max-width: 400px;
+			font-size: 1.2em;
+			margin: 0 auto;
+			display: flex;
+			justify-content: space-around;
+			flex-direction: row;
+		}
+	</style>
+	<script>
+		document.addEventListener('keydown', function (event) {
+			const methodmap = {
+				'k': 'keep',
+				'd': 'discard',
+				'a': 'anime',
+				'n': 'nsfw'
+			};
+
+			if (methodmap[event.key]) {
+				fetch('/' + '{{.Image}}/' + methodmap[event.key], {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: "{}"
+				}).then(response => {
+					if (response.ok) {
+							// Get the next image
+						window.location.reload();
+					}
+				});
+			}
+		});
+	</script>
+</head>
+
+<body>
+	<h1>Hello world</h1>
+	<img src="img/{{.Image}}" alt="{{.Image}}">
+	<div id="keymap">
+		<p><strong>[K]</strong>eep</p>
+		<p><strong>[D]</strong>iscard</p>
+		<p><strong>[A]</strong>nime-nsfw</p>
+		<p><strong>[N]</strong>sfw</p>
+	</div>
+
+
+</body>
+
+</html>
