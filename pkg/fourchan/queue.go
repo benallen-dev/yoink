@@ -3,10 +3,7 @@ package fourchan
 import (
 	"context"
 	"fmt"
-	"os"
-	"path"
 
-	"yoink/pkg/config"
 	"yoink/pkg/log"
 )
 
