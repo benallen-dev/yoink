@@ -65,6 +65,12 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(files) < 1 {
+		w.WriteHeader(404)
+		w.Write([]byte("No images to sort"))
+		return
+	}
+
 	// get the first file that's an image
 	var imageFile os.DirEntry
 	for _, file := range files {
