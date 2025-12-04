@@ -2,7 +2,9 @@ package fourchan
 
 import (
 	"context"
+	"errors"
 	"net/http"
+	"path/filepath"
 	"time"
 
 	"yoink/pkg/cache"
@@ -38,9 +40,6 @@ func NewClient() Client {
 		logger.Error("Could not load cache from disk", "error", err)
 	}
 
-	// TODO: Add database of md5 hashes for images so we can avoid downloading
-	//       images we already have.
-
 	logger.Debug("Created new 4chan client")
 
 	return Client{
@@ -58,6 +57,12 @@ func (c *Client) Get(url string) (*http.Response, error) {
 	req, err := http.NewRequest("GET", url, nil)
 
 	if lastAccessed, ok := c.history.Get(url); ok {
+		ext := filepath.Ext(url)
+		if ext == ".png" || ext == ".jpg" || ext == ".gif" {
+			// If we've downloded this image before, don't even bother fetching it
+			return nil, errors.New("skipping; cache entry exists")
+		}
+
 		t := time.Unix(lastAccessed, 0).Format("Mon, 02 Jan 2006 15:04:05 GMT")
 		logger.Debug("Setting If-Modified-Since header", "url", url, "lastAccessed", t)
 
@@ -71,7 +76,7 @@ func (c *Client) Get(url string) (*http.Response, error) {
 		return nil, err
 	}
 
-	if (res.StatusCode == 200) { // Only update the last accessed time if the server response with 200
+	if res.StatusCode == 200 { // Only update the last accessed time if the server response with 200
 		c.history.Add(url)
 	}
 	return res, nil
