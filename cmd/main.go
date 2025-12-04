@@ -116,26 +116,26 @@ func main() {
 	}()
 
 	// 4chan scraper threads
+
+	// Wallpapers/General
 	wgCtx, wgCancel := context.WithCancel(rootCtx)
 	defer wgCancel()
 	wg.Add(1)
-
-	// wCtx, wCancel := context.WithCancel(rootCtx)
-	// defer wCancel()
-	//wg.Add(1) // If you do this in the goroutine, wg.Add is executed after wg.Wait
-
-	// Process all the things
 	go func() {
 		defer wg.Done()
-		fourchan.ProcessQueue(wgCtx, fourchan.NewQueue(wgCtx, "wg")) // wallpaper/general, not waitgroup
+		fourchan.ProcessQueue(wgCtx, fourchan.NewQueue(wgCtx, "wg"))
 		logger.Info("Finished processing wg queue") 
 	}()
 
-	// go func() {
-	// 	defer wg.Done()
-	// 	fourchan.ProcessQueue(wgCtx, fourchan.NewQueue(wCtx, "w")) // wallpaper/anime
-	// 	logger.Info("Finished processing w queue") 
-	// }()
+	// Anime/Wallpapers
+	wCtx, wCancel := context.WithCancel(rootCtx)
+	defer wCancel()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		fourchan.ProcessQueue(wgCtx, fourchan.NewQueue(wCtx, "w")) // wallpaper/anime
+		logger.Info("Finished processing w queue")
+	}()
 
 	// Web ui thread
 	httpCtx, httpCancel := context.WithCancel(rootCtx)
