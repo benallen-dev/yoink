@@ -20,7 +20,7 @@ func (i ImageItem) getUrl() string {
 	return fmt.Sprintf("https://i.4cdn.org/%s/%s", i.board, i.filename)
 }
 
-func handleImageQueueItem(i ImageItem) {
+func handleImageQueueItem(i ImageItem, increaseCount func()) {
 	logger := log.Default()
 
 	url := i.getUrl()
@@ -44,6 +44,9 @@ func handleImageQueueItem(i ImageItem) {
 		logger.Warn(fmt.Sprintf("Got non-OK statuscode %s for %s", resp.Status, url))
 		return
 	}
+
+	// It's a new image!
+	increaseCount()
 
 	// create file
 	f, err := os.Create(fullPath)

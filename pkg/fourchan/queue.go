@@ -3,6 +3,7 @@ package fourchan
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"yoink/pkg/log"
 )
@@ -17,6 +18,12 @@ func ProcessQueue(ctx context.Context, q chan QueueItem) {
 	logger := log.Default()
 	logger = *logger.With("module", "fourchan")
 
+	// See, this might look like it's all threaded, but it isn't
+	count := 0
+	increaseCount := func () {
+		count++
+	}
+
 	for {
 		select {
 		case <-ctx.Done():
@@ -24,19 +31,20 @@ func ProcessQueue(ctx context.Context, q chan QueueItem) {
 			logger.Info("Received context.Done, stopping ProcessQueue")
 			return
 		case i := <-q:
-			switch i.(type) {
+			switch item := i.(type) {
 			case PageItem:
-				handlePageQueueItem(i.(PageItem), q)
+				handlePageQueueItem(item, q)
 			case ThreadItem:
-				handleThreadQueueItem(i.(ThreadItem), q)
+				handleThreadQueueItem(item, q)
 			case ImageItem:
-				handleImageQueueItem(i.(ImageItem))
+				handleImageQueueItem(item, increaseCount)
 			}
 		}
 
 		if len(q) == 0 {
 			httpClient.Close()
 			logger.Info("Queue is empty, exiting ProcessQueue")
+			logger.Info("There are " + strconv.Itoa(count) + " new images")
 			return
 		}
 
