@@ -34,9 +34,15 @@ func handleImageQueueItem(i ImageItem, increaseCount func()) {
 	}
 
 	resp, err := httpClient.Get(url)
+
 	if err != nil {
-		logger.Warn("Could not fetch image", "url", url, "board", i.board, "error", err.Error())
-		return
+		switch err.(type) {
+		case FileExistsError:
+			return
+		default:
+			logger.Warn("Could not fetch image", "url", url, "board", i.board, "error", err.Error())
+			return
+		}
 	}
 	defer resp.Body.Close()
 

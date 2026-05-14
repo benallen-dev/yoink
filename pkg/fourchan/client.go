@@ -2,7 +2,6 @@ package fourchan
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -12,6 +11,13 @@ import (
 
 	"golang.org/x/time/rate"
 )
+
+type FileExistsError struct {
+}
+
+func (e FileExistsError) Error() string {
+    return "file already exists"
+}
 
 // https://github.com/4chan/4chan-API/tree/master?tab=readme-ov-file
 // API Rules
@@ -52,15 +58,15 @@ func NewClient() Client {
 
 func (c *Client) Get(url string) (*http.Response, error) {
 	logger := log.Default()
-	logger.Info("GET (rate limited)", "url", url)
 
+	logger.Info("GET (rate limited)", "url", url)
 	req, err := http.NewRequest("GET", url, nil)
 
 	if lastAccessed, ok := c.history.Get(url); ok {
 		ext := filepath.Ext(url)
 		if ext == ".png" || ext == ".jpg" || ext == ".gif" {
 			// If we've downloded this image before, don't even bother fetching it
-			return nil, errors.New("skipping; cache entry exists")
+			return nil, &FileExistsError{}
 		}
 
 		t := time.Unix(lastAccessed, 0).Format("Mon, 02 Jan 2006 15:04:05 GMT")

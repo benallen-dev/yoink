@@ -43,8 +43,9 @@ func ProcessQueue(ctx context.Context, q chan QueueItem) {
 
 		if len(q) == 0 {
 			httpClient.Close()
-			logger.Info("Queue is empty, exiting ProcessQueue")
-			logger.Info("There are " + strconv.Itoa(count) + " new images")
+			logger.Info("")
+			logger.Info("\033[1mQueue is empty, exiting ProcessQueue\033[0m")
+			logger.Info("\033[1mThere are " + strconv.Itoa(count) + " new images\033[0m")
 			return
 		}
 

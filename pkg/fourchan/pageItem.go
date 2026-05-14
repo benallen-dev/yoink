@@ -35,16 +35,17 @@ func handlePageQueueItem(i PageItem, q chan QueueItem) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 404 {
-		// Queue the next page
+	switch resp.StatusCode {
+	case 200:
 		q <- NewPageItem(i.board, i.page+1)
-	}
-
-	if resp.StatusCode == 304 || resp.StatusCode == 404 {
-		logger.Warn(fmt.Sprintf("%s: %s", resp.Status, url))
+	case 304:
+		logger.Infof("%s: %s", resp.Status, url)
+		return
+	default:
+		logger.Warnf("%s: %s", resp.Status, url)
 		return
 	}
-
+	
 	var page Page
 	json.NewDecoder(resp.Body).Decode(&page)
 

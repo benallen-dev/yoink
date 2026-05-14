@@ -28,6 +28,7 @@ import (
 
 func Listen(ctx context.Context) {
 	logger := log.Default()
+	logger = *logger.With("module", "webui")
 	mux := http.NewServeMux()
 	s := &http.Server{
 		Addr:    ":8081",
@@ -40,6 +41,7 @@ func Listen(ctx context.Context) {
 	mux.HandleFunc("POST /{imageId}/{verb}", handlePost)
 
 	go func() {
+		logger.Infof("Listening on %s", s.Addr)
 		err := s.ListenAndServe()
 
 		if err != nil {

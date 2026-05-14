@@ -84,12 +84,11 @@ func cleanup() {
 		jobs <- file
 	}
 	close(jobs)
-
 }
 
 func main() {
 	logger := log.Default()
-	cleanup()
+	// cleanup()
 
 	// What I really want to do is set up a system whereby in main all you do
 	// is module.Start() and a thread that listens for shutdown and calls

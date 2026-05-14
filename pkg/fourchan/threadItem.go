@@ -1,15 +1,24 @@
 package fourchan
 
 import (
-	"os"
-	"path"
 	"encoding/json"
 	"fmt"
+	"os"
+	"path"
 	"strconv"
 
-	"yoink/pkg/log"
 	"yoink/pkg/config"
+	"yoink/pkg/log"
 )
+
+func imageOk(p Post) bool {
+	aspect := float64(p.W) / float64(p.H)
+	aspectOk := aspect < 1.8 && aspect > 1.77 // 16:9 is 1.777...
+	widthOk := p.W >= 3840
+	heightOk := p.H >= 2160
+
+	return p.Filename != "" && widthOk && heightOk && aspectOk
+}
 
 type ThreadItem struct {
 	board string
@@ -22,7 +31,7 @@ func (i ThreadItem) getUrl() string {
 
 func handleThreadQueueItem(i ThreadItem, q chan QueueItem) {
 	logger := log.Default()
-	
+
 	url := i.getUrl()
 	logger.Debug("Fetching", "url", url)
 
@@ -33,8 +42,14 @@ func handleThreadQueueItem(i ThreadItem, q chan QueueItem) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		logger.Warn(fmt.Sprintf("Got non-OK statuscode %s for %s", resp.Status, url))
+	switch resp.StatusCode {
+	case 200:
+		// continue
+	case 304:
+		logger.Debugf("Got non-OK statuscode %s for %s", resp.Status, url)
+		return
+	default:
+		logger.Warnf("Got non-OK statuscode %s for %s", resp.Status, url)
 		return
 	}
 
@@ -52,13 +67,14 @@ func handleThreadQueueItem(i ThreadItem, q chan QueueItem) {
 			continue
 		}
 
-		if p.Filename != "" && p.W == 3840 && p.H == 2160{
+		//if p.Filename != "" && p.W >= 3840 && p.H >= 2160 { 
+		if imageOk(p) {
 			tim := strconv.Itoa(p.Tim)
 
-			q <- ImageItem {
+			q <- ImageItem{
 				board:    i.board,
 				filename: tim + p.Ext,
-				tim: tim,
+				tim:      tim,
 			}
 		}
 	}
