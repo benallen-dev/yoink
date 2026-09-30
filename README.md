@@ -24,3 +24,7 @@ The reason for these categories is that I'm using this to sort images into train
 
 The seperate nsfw and nsfw anime categories is because at least to my mind there's a big difference between photographs and drawn images and I wonder if when training the model that might cause errors. They can always be merged if that doesn't turn out to be true.
 
+Use this for wallhaven
+```sh
+curl https://wallhaven.cc/api/v1/search\?atleast\=3840x2160\&ratios\=16x9 | jq '.data[] | {id, resolution, path, thumb: .thumbs.small}'
+```

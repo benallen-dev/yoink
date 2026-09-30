@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 
 	"image"
@@ -32,7 +33,7 @@ func worker(id int, filechan <-chan os.DirEntry) {
 		e := path.Ext(file.Name())
 		if e == ".jpg" || e == ".png" || e == ".jpeg" {
 			//logger.Info("Found image", "file", file.Name())
-			
+
 			file, err := os.Open(path.Join(config.NewDir, file.Name()))
 			if err != nil {
 				logger.Error("Could not open file", "error", err)
@@ -88,6 +89,11 @@ func cleanup() {
 
 func main() {
 	logger := log.Default()
+
+	nowaitPtr := flag.Bool("nowait", false, "closes the program as soon as the scraper threads are finished")
+	flag.Parse()
+	nowait := *nowaitPtr
+
 	// cleanup()
 
 	// What I really want to do is set up a system whereby in main all you do
@@ -115,25 +121,40 @@ func main() {
 	}()
 
 	// 4chan scraper threads
+	var chanWg sync.WaitGroup
 
 	// Wallpapers/General
 	wgCtx, wgCancel := context.WithCancel(rootCtx)
 	defer wgCancel()
 	wg.Add(1)
+	chanWg.Add(1)
 	go func() {
 		defer wg.Done()
+		defer chanWg.Done()
 		fourchan.ProcessQueue(wgCtx, fourchan.NewQueue(wgCtx, "wg"))
-		logger.Info("Finished processing wg queue") 
+		logger.Info("Finished processing wg queue")
 	}()
 
 	// Anime/Wallpapers
 	wCtx, wCancel := context.WithCancel(rootCtx)
 	defer wCancel()
+	chanWg.Add(1)
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
+		defer chanWg.Done()
 		fourchan.ProcessQueue(wgCtx, fourchan.NewQueue(wCtx, "w")) // wallpaper/anime
 		logger.Info("Finished processing w queue")
+	}()
+
+	// Watcher that auto-closes the web thread once all scrapers are done
+	// For use in autostart scenarios
+	go func() {
+		chanWg.Wait()
+		logger.Info("Scraper threads finished")
+		if nowait {
+			rootCancel()
+		}
 	}()
 
 	// Web ui thread
